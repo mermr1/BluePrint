@@ -55,6 +55,8 @@ blueprint:
           filter:
           - domain: input_number
           multiple: false
+  variables:
+    door_timer: !input door_timer
 mode: single
 triggers:
   - entity_id: !input car_presence_1
@@ -65,7 +67,7 @@ triggers:
   - entity_id: !input car_presence_1
     to: unavailable
     for: >-
-      {{ states('input_number.garage_door_timer')|float }}
+      {{ states(door_timer)|float }}
     trigger: state
     id: switch1_unavailable
     alias: Switch1 unavailable
