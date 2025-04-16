@@ -50,13 +50,12 @@ blueprint:
     door_timer:
       name: Door Timer
       description: This is an input number to set seconds for unavailable
+      default: 30
       selector:
-        entity:
-          filter:
-          - domain: input_number
-          multiple: false
-  variables:
-    door_timer: !input door_timer
+        number:
+          min: 0
+          max: 90
+          unit_of_measurement: seconds
 mode: single
 triggers:
   - entity_id: !input car_presence_1
@@ -66,8 +65,7 @@ triggers:
     alias: Switch1 on
   - entity_id: !input car_presence_1
     to: unavailable
-    for: >-
-      {{ states(door_timer)|float }}
+    for: !input door_timer
     trigger: state
     id: switch1_unavailable
     alias: Switch1 unavailable
