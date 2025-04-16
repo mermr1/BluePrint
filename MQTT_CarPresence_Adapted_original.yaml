@@ -2,7 +2,7 @@ blueprint:
   name: MQTT_CarPresence_Adapted
   author: mermr1
   description: Open garage door when car connects to Wi-Fi (original listing MQTT_Taxmota_CarPresence)
-  source_url: https://github.com/mermr1/BluePrints/MQTT_CarPresence_Adapted.yaml
+  source_url: https://github.com/mermr1/BluePrints/MQTT_CarPresence_Adapted_original.yaml
   domain: automation
   homeassistant:
     min_version: 2025.4.2
