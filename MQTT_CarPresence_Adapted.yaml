@@ -1,0 +1,211 @@
+blueprint:
+  name: MQTT_CarPresence_Adapted
+  author: mermr1
+  description: Open garage door when car connects to Wi-Fi (original listing MQTT_Taxmota_CarPresence)
+  source_url: https://github.com/mermr1/BluePrints/MQTT_CarPresence_Adapted.yaml
+  domain: automation
+  homeassistant:
+    min_version: 2025.4.2
+  input:
+    garage_door_1:
+      name: Garage Door 1
+      description: This cover is the First Garage Door
+      selector:
+        entity:
+          filter:
+          - domain: cover
+          multiple: false
+    garage_door_2:
+      name: Garage Door 2
+      description: This cover is the second Garage Door, if double door choose same as First Garage Door
+      selector:
+        entity:
+          filter:
+          - domain: cover
+          multiple: false
+    car_presence_1:
+      name: Car Presence 1
+      description: This switch is the first car's connection to the MQTT broker
+      selector:
+        entity:
+          filter:
+          - domain: switch
+          multiple: false
+    car_presence_2:
+      name: Car Presence 2
+      description: This switch is the second car's connection to the MQTT broker
+      selector:
+        entity:
+          filter:
+          - domain: switch
+          multiple: false
+    car_override:
+      name: Garage Override Button
+      description: This switch is an override to stop garage door remote operation
+      selector:
+        entity:
+          filter:
+          - domain: switch
+          multiple: false
+mode: single
+triggers:
+  - entity_id: !input car_presence_1
+    trigger: state
+    id: switch1_on
+    to: "on"
+    alias: Switch1 on
+  - entity_id: !input car_presence_1
+    to: unavailable
+    for: >-
+      {{ states('input_number.garage_door_timer')|float }}
+    trigger: state
+    id: switch1_unavailable
+    alias: Switch1 unavailable
+  - trigger: state
+    entity_id: !input car_presence_2
+    to: "on"
+    id: switch2_on
+    alias: Switch2 on
+  - alias: Switch2 unavailable
+    trigger: state
+    entity_id: !input car_presence_2
+    to: unavailable
+    id: switch2_unavailable
+    for: >-
+      {{ states('input_number.garage_Door_timer')|float }}
+conditions: []
+actions:
+  - alias: switch1 on
+    choose:
+      - conditions:
+          - condition: and
+            conditions:
+              - condition: trigger
+                id:
+                  - switch1_on
+              - condition: state
+                entity_id: !input car_presence_1
+                state: "on"
+              - condition: state
+                entity_id: !input garage_door_1
+                state: closed
+              - condition: state
+                entity_id: !input car_override
+                state: "off"
+        sequence:
+          - repeat:
+              sequence:
+                - action: cover.open_cover
+                  metadata: {}
+                  data: {}
+                  target:
+                    entity_id: !input garage_door_1
+                - delay:
+                    hours: 0
+                    minutes: 0
+                    seconds: 30
+                    milliseconds: 0
+              until:
+                - condition: state
+                  entity_id: !input garage_door_1
+                  state: open
+  - alias: Switch1 unavailable
+    choose:
+      - conditions:
+          - condition: and
+            conditions:
+              - condition: trigger
+                id:
+                  - switch1_unavailable
+              - condition: state
+                entity_id: !input car_presence_1
+                state: unavailable
+              - condition: state
+                entity_id: !input garage_door_1
+                state: open
+              - condition: state
+                entity_id: !input car_override
+                state: "off"
+        sequence:
+          - repeat:
+              sequence:
+                - action: cover.close_cover
+                  metadata: {}
+                  data: {}
+                  target:
+                    entity_id: !input garage_door_1
+                - delay:
+                    hours: 0
+                    minutes: 0
+                    seconds: 30
+                    milliseconds: 0
+              until:
+                - condition: state
+                  entity_id: !input garage_door_1
+                  state: closed
+  - alias: Switch2 on
+    choose:
+      - conditions:
+          - condition: trigger
+            id:
+              - switch2_on
+          - condition: state
+            entity_id: !input garage_door_2
+            state: closed
+          - condition: state
+            entity_id: !input car_presence_2
+            state: "on"
+          - condition: state
+            entity_id: !input car_override
+            state: "off"
+        sequence:
+          - repeat:
+              sequence:
+                - action: cover.open_cover
+                  metadata: {}
+                  data: {}
+                  target:
+                    entity_id: !input garage_door_2
+                - delay:
+                    hours: 0
+                    minutes: 0
+                    seconds: 30
+                    milliseconds: 0
+              until:
+                - condition: state
+                  entity_id: !input garage_door_2
+                  state: open
+  - alias: Switch2 unavailable
+    choose:
+      - conditions:
+          - condition: and
+            conditions:
+              - condition: trigger
+                id:
+                  - switch2_unavailable
+              - condition: state
+                entity_id: !input car_presence_2
+                state: unavailable
+              - condition: state
+                entity_id: !input garage_door_2
+                state: open
+              - condition: state
+                entity_id: !input car_override
+                state: "off"
+        sequence:
+          - repeat:
+              sequence:
+                - action: cover.close_cover
+                  metadata: {}
+                  data: {}
+                  target:
+                    entity_id: !input garage_door_2
+                - delay:
+                    hours: 0
+                    minutes: 0
+                    seconds: 30
+                    milliseconds: 0
+              until:
+                - condition: state
+                  entity_id: !input garage_door_2
+                  state: closed
