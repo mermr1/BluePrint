@@ -47,6 +47,14 @@ blueprint:
           filter:
           - domain: switch
           multiple: false
+    door_timer:
+      name: Door Timer
+      description: This is an input number to set seconds for unavailable
+      selector:
+        entity:
+          filter:
+          - domain: input_number
+          multiple: false
 mode: single
 triggers:
   - entity_id: !input car_presence_1
