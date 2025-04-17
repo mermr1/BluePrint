@@ -51,11 +51,11 @@ blueprint:
       name: Door Timer
       description: This is an input number to set seconds for unavailable
       default: 30
+      step: 5
       selector:
         number:
           min: 0
           max: 90
-          step: 5
           unit_of_measurement: seconds
 mode: single
 triggers:
