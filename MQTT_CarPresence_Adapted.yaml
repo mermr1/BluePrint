@@ -64,7 +64,8 @@ blueprint:
           unit_of_measurement: seconds
           mode: slider
           step: 5.0
-mode: single
+mode: parallel
+max: 2
 triggers:
 - entity_id: !input car_presence_1
   trigger: state
