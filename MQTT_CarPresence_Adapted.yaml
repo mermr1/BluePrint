@@ -55,6 +55,7 @@ blueprint:
         number:
           min: 0
           max: 90
+          step: 5
           unit_of_measurement: seconds
 mode: single
 triggers:
