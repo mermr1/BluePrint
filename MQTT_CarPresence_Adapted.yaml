@@ -79,12 +79,10 @@ triggers:
     entity_id: !input car_presence_2
     to: unavailable
     id: switch2_unavailable
-    for: >-
-      {{ states('input_number.garage_Door_timer')|float }}
+    for: !input door_timer
 conditions: []
 actions:
-  - alias: switch1 on
-    choose:
+  - choose:
       - conditions:
           - condition: and
             conditions:
@@ -117,8 +115,7 @@ actions:
                 - condition: state
                   entity_id: !input garage_door_1
                   state: open
-  - alias: Switch1 unavailable
-    choose:
+  - choose:
       - conditions:
           - condition: and
             conditions:
@@ -151,8 +148,7 @@ actions:
                 - condition: state
                   entity_id: !input garage_door_1
                   state: closed
-  - alias: Switch2 on
-    choose:
+  - choose:
       - conditions:
           - condition: trigger
             id:
@@ -183,8 +179,7 @@ actions:
                 - condition: state
                   entity_id: !input garage_door_2
                   state: open
-  - alias: Switch2 unavailable
-    choose:
+  - choose:
       - conditions:
           - condition: and
             conditions:
